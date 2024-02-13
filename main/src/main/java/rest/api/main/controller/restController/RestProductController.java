@@ -62,5 +62,12 @@ public class RestProductController {
         responseDataDTO.setStatus("Succes");
         responseDataDTO.setData(productInformationService.deleteProduct(id));
         return new ResponseEntity<>(responseDataDTO, HttpStatus.OK);
+
+    }
+    @PutMapping("/product/update/{id}")
+    public ResponseEntity<ResponseDataDTO> updateUser(@PathVariable Integer id) {
+        ResponseDataDTO responseDataDTO = new ResponseDataDTO();
+        responseDataDTO.setStatus("Succes");
+        return new ResponseEntity<>(responseDataDTO, HttpStatus.OK);
     }
 }

@@ -30,41 +30,25 @@ public class ProductInformationServiceImpl implements ProductInformationService 
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "productinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "productinformationDTO", allEntries = true)
-            }
-    )
     public List<ProductInformationDTO> finAll() {
         return productInformationMapper.toDTOList(productInformationRepository.findAll());
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "productinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "productinformationDTO", allEntries = true)
-            }
-    )
     public List<ProductInformationDTO> findProductActive() {
         List<ProductInformation> productInformation = productInformationRepository.findAll().stream().filter(product -> product.getIsActive().equals(0)).toList();
         return productInformationMapper.toDTOList(productInformation);
     }
 
     @Override
-    @CachePut(cacheNames = "productinformationDTO")
+    @CachePut(cacheNames = "productinformationDTO", key = "#id")
     public ProductInformationDTO saveData(ProductInformationDTO productInformationDTO) {
         productInformationRepository.save(productInformationMapper.toEntity(productInformationDTO));
         return productInformationDTO;
     }
 
     @Override
-    @CachePut(cacheNames = "productinformationDTO")
+    @CachePut(cacheNames = "productinformationDTO", key = "#id")
     public ProductInformationDTO nonActiveProduct(ProductInformationDTO productInformationDTO) {
         if( productInformationRepository.findById(productInformationDTO.getProductId()).orElse(null) == null ){
             throw new RuntimeException("Product "+ productInformationDTO.getProductId() +" tidak ditemukan");
@@ -77,7 +61,7 @@ public class ProductInformationServiceImpl implements ProductInformationService 
     }
 
     @Override
-    @CachePut(cacheNames = "productinformationDTO", key = "#id")
+    @CacheEvict(cacheNames = "productinformationDTO", key = "#id")
     public ProductInformationDTO deleteProduct(Integer id) {
         ProductInformationDTO productInformationDTO = productInformationMapper.toDTO(productInformationRepository.findById(id).orElse(null));
         productInformationRepository.deleteById(id);

@@ -30,61 +30,29 @@ public class UserInformationServiceImpl implements UserInformationService {
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userinformationDTO", allEntries = true)
-            }
-    )
     public List<UserInformationDTO> findAll() {
         return userInformationMapper.toDTOList(userInformationRepository.findAll());
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userinformationDTO", allEntries = true)
-            }
-    )
     public List<UserInformationDTO> findUserActive() {
         List<UserInformation> userInformation = userInformationRepository.findAll().stream().filter(userInf -> userInf.getIsActive().equals(0)).toList();
         return userInformationMapper.toDTOList(userInformation);
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userinformationDTO", allEntries = true)
-            }
-    )
     public UserInformationDTO saveData(UserInformationDTO userInformationDTO) {
         userInformationRepository.save(userInformationMapper.toEntity(userInformationDTO));
         return userInformationDTO;
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userinformationDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userinformationDTO", allEntries = true)
-            }
-    )
     public List<UserInformationDTO> findByName(String firstName, String lastName) {
         return userInformationMapper.toDTOList(userInformationRepository.findByName(firstName, lastName));
     }
 
     @Override
-    @CachePut(cacheNames = "userinformationDTO")
+    @CachePut(cacheNames = "userinformationDTO", key = "#id")
     public UserInformationDTO nonActiveUser(UserInformationDTO userInformationDTO) {
        if( userInformationRepository.findById(userInformationDTO.getUserId()).orElse(null) == null ){
            throw new RuntimeException("User "+userInformationDTO.getUserId()+ "tidak ditemukan");
@@ -96,7 +64,7 @@ public class UserInformationServiceImpl implements UserInformationService {
         return userInformationDTO;
     }
     @Override
-    @CachePut(cacheNames = "userinformationDTO", key = "#id")
+    @CacheEvict(cacheNames = "userinformationDTO", key = "#id")
     public UserInformationDTO deletUser(Integer id) {
         UserInformationDTO userInformationDTO = userInformationMapper.toDTO(userInformationRepository.findById(id).orElse(null));
         userInformationRepository.deleteById(id);

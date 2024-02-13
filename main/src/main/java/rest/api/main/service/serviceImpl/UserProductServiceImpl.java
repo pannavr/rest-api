@@ -39,33 +39,17 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userproductDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userproductDTO", allEntries = true)
-            }
-    )
     public List<UserProductDTO> findAll() {
         return userProductMapper.toDTOList(userProductRepository.findAll());
     }
 
     @Override
-    @Caching(
-            cacheable = {
-                    @Cacheable(cacheNames = "userproductDTO", key = "0")
-            },
-            evict = {
-                    @CacheEvict(cacheNames = "userproductDTO", allEntries = true)
-            }
-    )
     public List<UserProductDTO> findUserProductActive() {
         return userProductMapper.toDTOList(userProductRepository.findAll().stream().filter(userProduct -> userProduct.getIsActive().equals(0)).toList());
     }
 
     @Override
-    @CachePut(cacheNames = "userproductDTO")
+    @CachePut(cacheNames = "userproductDTO", key = "#id")
     public UserProductDTO saveData(UserProductDTO userProductDTO) {
         ProductInformation productInformation = productInformationRepository.findById(userProductDTO.getProductId()).orElse(null);
        if (productInformation.getProductStock()<1){
@@ -78,7 +62,7 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    @CachePut(cacheNames = "userproductDTO")
+    @CachePut(cacheNames = "userproductDTO", key = "#id")
     public UserProductDTO nonActiveUserProduct(UserProductDTO userProductDTO) {
         if( productInformationRepository.findById(userProductDTO.getUserProductId()).orElse(null) == null ){
             throw new RuntimeException("Data Order "+ userProductDTO.getUserProductId() +" tidak ditemukan");
@@ -104,7 +88,7 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    @CacheEvict(cacheNames = "userproductDTO", key = "#id", beforeInvocation = true)
+    @CacheEvict(cacheNames = "userproductDTO", key = "#id")
     public UserProductDTO deleteUserProduct(Integer id) {
        UserProductDTO userProductDTO = userProductMapper.toDTO(userProductRepository.findById(id).orElse(null));
         userProductRepository.deleteById(id);
