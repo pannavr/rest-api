@@ -5,7 +5,7 @@
 
  setelah container dari mysql redis dan kafka telah terdownload silahkan jalankan aplikasi.
 
- Untuk spect API bisa di export ke postman file : api-test.postman_collection
+ Untuk spect API bisa di import ke postman dari file : api-test.postman_collection
 
  Hal yang sudah dilakukan dalam tugas :
  1. Spring boot ✔
